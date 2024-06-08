@@ -1,9 +1,17 @@
 package types
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"fmt"
+	"regexp"
+
+	"golang.org/x/crypto/bcrypt"
+)
 
 const (
-	bcryptCost = 12
+	bcryptCost     = 12
+	minNameLen     = 2
+	minPasswordLen = 8
+	minEmailLen    = 5
 )
 
 type CreateUserParams struct {
@@ -11,6 +19,29 @@ type CreateUserParams struct {
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
+}
+
+func (params CreateUserParams) Validate() []error {
+	errors := []error{}
+	if len(params.FirstName) < minNameLen {
+		errors = append(errors, fmt.Errorf("firstName length should be at least %d characters", minNameLen))
+	}
+	if len(params.LastName) < minNameLen {
+		errors = append(errors, fmt.Errorf("lastName length should be at least %d characters", minNameLen))
+	}
+	if len(params.Password) < minPasswordLen {
+		errors = append(errors, fmt.Errorf("password length should be at least %d characters", minPasswordLen))
+	}
+	if !isEmailValid(params.Email) {
+		errors = append(errors, fmt.Errorf("email is not valid"))
+	}
+
+	return errors
+}
+
+func isEmailValid(e string) bool {
+	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+	return emailRegex.MatchString(e)
 }
 
 type User struct {

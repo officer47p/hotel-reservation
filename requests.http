@@ -25,3 +25,14 @@ Content-Type: application/json
     "email": "alijoon@gmail.com",
     "password": "simple-password"
 }
+
+###
+POST  http://localhost:3001/api/v1/users
+Content-Type: application/json
+
+{
+    "firstName": "k",
+    "lastName": "d",
+    "email": "alim",
+    "password": "simpld"
+}

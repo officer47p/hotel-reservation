@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
@@ -22,6 +23,10 @@ func (h *UserHandler) HandlePostUser(c *fiber.Ctx) error {
 	var params types.CreateUserParams
 	if err := c.BodyParser(&params); err != nil {
 		return err
+	}
+
+	if errs := params.Validate(); len(errs) > 0 {
+		return errors.Join(errs...)
 	}
 
 	user, err := types.NewUserFromParams(params)
