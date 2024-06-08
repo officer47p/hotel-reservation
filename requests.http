@@ -7,3 +7,8 @@ GET http://localhost:3001/api/v1/users/666392124114293882b3f00d
 ###
 
 GET http://localhost:3001/api/v1/users/882b3f00d
+
+
+###
+
+GET http://localhost:3001/api/v1/users
