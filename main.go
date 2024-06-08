@@ -38,6 +38,7 @@ func main() {
 
 	apiv1.Get("/users", userHandler.HandleGetUsers)
 	apiv1.Get("/users/:id", userHandler.HandleGetUser)
+	apiv1.Post("/users", userHandler.HandlePostUser)
 	err = app.Listen(*listenAddr)
 	if err != nil {
 		panic(err)
