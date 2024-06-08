@@ -14,6 +14,22 @@ const (
 	minEmailLen    = 5
 )
 
+type UpdateUserParams struct {
+	FirstName string `bson:"firstName,omitempty" json:"firstName,omitempty"`
+	LastName  string `bson:"lastName,omitempty" json:"lastName,omitempty"`
+}
+
+func (params UpdateUserParams) Validate() []error {
+	errors := []error{}
+	if params.FirstName != "" && len(params.FirstName) < minNameLen {
+		errors = append(errors, fmt.Errorf("firstName length should be at least %d characters", minNameLen))
+	}
+	if params.LastName != "" && len(params.LastName) < minNameLen {
+		errors = append(errors, fmt.Errorf("lastName length should be at least %d characters", minNameLen))
+	}
+	return errors
+}
+
 type CreateUserParams struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`

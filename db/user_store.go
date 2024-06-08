@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"errors"
 
 	"github.com/officer47p/hotel-reservation/types"
 	"go.mongodb.org/mongo-driver/bson"
@@ -15,6 +16,8 @@ type UserStore interface {
 	GetUserById(context.Context, string) (*types.User, error)
 	GetUsers(context.Context) ([]*types.User, error)
 	InsertUser(context.Context, *types.User) (*types.User, error)
+	DeleteUser(context.Context, string) error
+	UpdateUser(ctx context.Context, filter bson.M, params types.UpdateUserParams) error
 }
 
 type MongoUserStore struct {
@@ -50,9 +53,9 @@ func (s *MongoUserStore) GetUserById(ctx context.Context, id string) (*types.Use
 
 	var user types.User
 	err = s.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&user)
-	// if err == mongo.ErrNoDocuments {
-	// 	return nil, nil
-	// }
+	if err == mongo.ErrNoDocuments {
+		return nil, nil
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -70,4 +73,39 @@ func (s *MongoUserStore) InsertUser(ctx context.Context, user *types.User) (*typ
 	user.ID = res.InsertedID.(primitive.ObjectID).Hex()
 
 	return user, nil
+}
+
+func (s *MongoUserStore) DeleteUser(ctx context.Context, id string) error {
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+
+	res, err := s.coll.DeleteOne(ctx, bson.M{"_id": oid})
+	if err != nil {
+		return err
+	}
+
+	if res.DeletedCount == 0 {
+		return errors.New("no user with the given id was found")
+	}
+
+	return nil
+}
+
+func (s *MongoUserStore) UpdateUser(ctx context.Context, filter bson.M, params types.UpdateUserParams) error {
+	// to prevent changing a field we can do this:
+	// if values["email"] != nil {
+	// 	return errors.New("can't change email")
+	// }
+	update := bson.D{
+		{Key: "$set", Value: params},
+	}
+
+	_, err := s.coll.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return err
+	}
+	return nil
+
 }

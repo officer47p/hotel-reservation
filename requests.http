@@ -2,7 +2,7 @@ GET http://localhost:3001/api/v1/users
 
 ###
 
-GET http://localhost:3001/api/v1/users/66645383e1d59f4c012af99a
+GET http://localhost:3001/api/v1/users/66645383e1d59f4c012af99e
 
 ###
 
@@ -36,3 +36,18 @@ Content-Type: application/json
     "email": "alim",
     "password": "simpld"
 }
+
+###
+DELETE  http://localhost:3001/api/v1/users/66645383e1d59f4c012af99e
+
+
+###
+PUT   http://localhost:3001/api/v1/users/66645765a220b57103edaabb
+Content-Type: application/json
+
+{
+    "email": "mamad@fmai.com"
+}
+
+###
+GET http://localhost:3001/api/v1/users/66645765a220b57103edaabb
